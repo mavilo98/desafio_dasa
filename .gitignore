@@ -1,0 +1,3 @@
+.venv
+app/results/result.vcf.gz
+app/process_data/.snakemake/

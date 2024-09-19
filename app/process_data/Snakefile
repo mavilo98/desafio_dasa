@@ -1,0 +1,21 @@
+# Snakefile
+
+# Objetivo final da pipeline
+rule all:
+    input:
+        "../results/result.vcf.gz"
+
+# Rule de anotação do VCF
+rule process_data:
+    input:
+        vcf_input="../data/NIST.vcf.gz",
+        annotations="../data/snps-annotations.vcf.gz"
+    output:
+        "../results/result.vcf.gz"
+    params:
+        dp=config["dp"]  # Fetch the dp parameter from the config
+    shell:
+        "bcftools annotate -a {input.annotations} -c INFO -x ^INFO/DP -i 'INFO/DP > {params.dp}' {input.vcf_input} -o {output} -Ob --force"
+
+# Arquivo de configuração
+configfile: "config.yaml"

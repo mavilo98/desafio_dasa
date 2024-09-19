@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Snakemake</title>
+    <script>
+        // Function to call the API with a parameter
+        function runSnakemake() {
+            // Get the value from the input field
+            var dp_value = document.getElementById('dp_value').value;
+
+            // Display the loading message
+            document.getElementById('result').innerHTML = 'Processando arquivo...';
+
+            // Call the API with the dp parameter
+            fetch(`/api/run_snakemake?dp=${dp_value}`)
+            .then(response => response.json())
+            .then(data => {
+                // Display the result in the "result" div
+                document.getElementById('result').innerHTML = data.message;
+
+                // If the file URL is provided, create a download button
+                if (data.file_url) {
+                    var downloadButton = document.createElement('button');
+                    downloadButton.innerHTML = 'Download Result File';
+                    downloadButton.onclick = function() {
+                        window.location.href = data.file_url; // Link to download the result file
+                    };
+
+                    // Add the button to the "result" div
+                    document.getElementById('result').appendChild(downloadButton);
+                }
+            })
+            .catch(error => {
+                // Show an error message if something goes wrong
+                document.getElementById('result').innerHTML = 'Error running Snakemake: ' + error;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Anote e filtre o vcf NIST</h1>
+    <p>Valores de frequência variam de acordo com a disponibilidade no VCF referência - parâmetro CAF explicado no header</p>
+
+    <!-- Input field for the user to enter the DP value -->
+    <label for="dp_value">Enter DP value:</label>
+    <input type="number" id="dp_value" name="dp_value" required>
+
+    <!-- Button to trigger the Snakemake run -->
+    <button onclick="runSnakemake()">Run Snakemake</button>
+
+    <!-- Div to display the result from the API -->
+    <div id="result"></div>
+</body>
+</html>
